@@ -6,7 +6,8 @@ A股 股票时刻关注
 上传所有文件到你的esp32s2 即可（esp32s2的micropython版本不低于1.19）
 
 ## 硬件 接线
-ST7789接线
+接线极为简单，可以自行设计PCB 或直接接线
+### ST7789接线
 |ST7789|ESP32s2|
 |-|-|
 |sda|10|
@@ -24,6 +25,10 @@ ST7789接线
 KEY="SFBgZ_NMzMaWbjrXW"
 CITY="shanghai"
 ```
-
+[心知天气](https://www.seniverse.com/)
 OK 大功告成，请按照LCD显示的信息操作即可。
 
+## 该项目部分模块引用自
+[microdot](https://github.com/miguelgrinberg/microdot)
+[micropython-easydisplay](https://github.com/funnygeeker/micropython-easydisplay)
+[WiFiManager](https://github.com/tayfunulu/WiFiManager)
