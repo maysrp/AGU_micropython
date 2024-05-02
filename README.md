@@ -25,7 +25,8 @@ A股 股票时刻关注
 KEY="SFBgZ_NMzMaWbjrXW"
 CITY="shanghai"
 ```
-[心知天气](https://www.seniverse.com/)
+[心知天气](https://www.seniverse.com/)  
+
 OK 大功告成，请按照LCD显示的信息操作即可。
 
 ## 该项目部分模块引用自
