@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>    
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+<title>股票监控管理页面</title>
+</head>
+<body>
+
+
+    
+    <div class="container ">
+        <div class="row">
+            <div class="jumbotron">
+                <h1>股票监控管理页面</h1>
+                <p>最大显示股票信息为10条。</p>
+              </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="input-group input-group-lg">
+                    <div class="input-group-addon">
+                        <span>
+                            输入代码
+                        </span>
+                    </div>
+                    <input type="number" id="code" class="form-control">
+                    <div class="input-group-btn">
+                        <button class="btn btn-info" id="btn_gp">查询</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br/>
+        <div class="row">
+            <div class="col-md-4">
+                <h2 class="text-info">查询到的股票:</h2>
+            </div>
+            <div class="show-info col-md-8">
+
+            </div>
+        </div>
+        <hr/>
+        <div class="row">
+            <div class="col-md-4">
+                <h2 class="text-success">已保存的股票代码:</h2>
+            </div>
+            <ol class="added col-md-8">
+
+            </ol>
+        </div>
+    </div>
+
+
+
+
+    <script>
+
+
+function add_one(mx){
+    var div=$("<li><h3>"+mx[2]+" <small> 代码"+mx[1]+"</small>  </h3></li>");
+    var button=$("<button class='btn btn-danger' onclick=del_code('"+mx[0]+"','"+mx[1]+"','"+mx[2]+"')>删除</button>");
+    div.append(button);
+    $(".added").append(div);
+    // ty code name
+}
+
+// AJAX 1
+function add_code(ty,code,name){
+    // 添加股票
+    console.log(ty,code,name);
+    url="/add";
+    // 添加网址 一个回调传入信息
+    $.ajax({
+        type:"POST",
+        url:url,
+        async:false,
+        data:{
+            ty:ty,
+            code:code,
+            name:name
+
+        },
+        success:function(data){
+            if(data.status){
+                console.log("添加完成");
+                get_all();//刷新
+                $(".show-info").html("");
+            }
+        }
+    })
+}
+// AJAX 2
+function del_code(ty,code,name){
+    // 删除股票
+    console.log(ty,code,name);
+    url="/del";
+    // 添加网址 一个回调传入信息
+    $.ajax({
+        type:"POST",
+        url:url,
+        async:false,
+        data:{
+            ty:ty,
+            code:code,
+            name:name
+
+        },
+        success:function(data){
+            if(data.status){
+                console.log("删除完成");
+                get_all();//刷新
+            }
+
+        }
+    })
+}
+
+// AJAX 3
+function get_all(){
+    $(".added").html("")
+    // 现有股票 URL
+    url="/all";
+    $.ajax({
+        type:"POST",
+        url:url,
+        async:false,
+        success:function(data){
+            console.log("查询完成");
+            if(data.status){
+                for (const key in data.info) {
+                    add_one(data.info[key])
+                }
+            }
+        }
+    })
+
+}
+
+// AJAX 4
+function fgp(cod='600111',ty='sz'){
+    var url="http://qt.gtimg.cn/q="+ty+cod
+    var name=''
+    var price=''
+    var code=''
+    $.ajax({
+        type:"GET",
+        url:url,
+        async:false,
+        success:function(data){
+            e=data.split("~");
+            if(e[1]){
+                name=e[1];
+                code=e[2];
+                price=e[3];
+            }
+            
+        }
+    })
+    if(name){
+        var mk=[name,ty,code,price]
+        return mk
+    }else{
+        return []
+    }
+}
+
+function add_btn(mx){
+    var div=$("<h3>"+mx[0]+" <small> 代码"+mx[2]+"股价:"+mx[3]+" </small>  </h3>");
+    var button=$("<button class='btn btn-primary' onclick=add_code('"+mx[1]+"','"+mx[2]+"','"+mx[0]+"')>添加</button>");
+    div.append(button);
+    $(".show-info").append(div);
+}
+
+$("#btn_gp").click(function(){
+    var code=$("#code").val();
+    if(code.length==6){
+        $(".show-info").html("");
+        var sz=fgp(code,"sz");
+        if(sz.length>1){
+            add_btn(sz);
+        }
+        var sh=fgp(code,"sh");
+        if(sh.length>1){
+            add_btn(sh);
+        }
+        if(sh.length+sz.length<3){
+            alert("未查询到相关信息");
+        }
+        $("#code").val("");
+    }else{
+        alert("股票代码为6位");
+    }
+})
+
+
+
+
+get_all();
+// 执行查询
+    </script>
+
+    
+</body>
+</html>
